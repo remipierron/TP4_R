@@ -106,6 +106,61 @@ Multiplier la matrice logique `X > 3` par 1 convertit `TRUE` en 1 et `FALSE` en 
 
 ## A3
 
+**a.** Sommes des lignes, des colonnes, de la diagonale et de l'anti-diagonale de `durer` :
+
+```{r A3-a}
+durer
+rowSums(durer)
+colSums(durer)
+sum(diag(durer))
+sum(diag(durer[, ncol(durer):1]))   # anti-diagonale
+```
+
+Toutes ces sommes valent `r sum(diag(durer))` : le carré de Dürer est magique.
+
+**b.** Une seule instruction qui teste si une matrice est magique : on regroupe toutes les sommes dans un vecteur et on vérifie qu'il n'y a qu'une seule valeur distincte.
+
+```{r A3-b}
+est_magique <- function(M) length(unique(c(rowSums(M), colSums(M), sum(diag(M)), sum(diag(M[, ncol(M):1]))))) == 1
+est_magique(durer)
+est_magique(candidat)
+```
+
+`durer` est magique (`r est_magique(durer)`), `candidat` ne l'est pas (`r est_magique(candidat)`).
+
+**c.** Diagnostic de `candidat` :
+
+```{r A3-c}
+candidat
+rowSums(candidat)
+colSums(candidat)
+sum(diag(candidat))
+sum(diag(candidat[, ncol(candidat):1]))
+```
+
+La somme attendue est 15 (c'est la valeur la plus fréquente, et celle de l'anti-diagonale). Repérons ce qui s'en écarte :
+
+```{r A3-c-diagnostic}
+cible <- 15
+lignes_pb   <- which(rowSums(candidat) != cible)
+colonnes_pb <- which(colSums(candidat) != cible)
+lignes_pb
+colonnes_pb
+ecart <- rowSums(candidat)[lignes_pb] - cible
+ecart
+```
+
+Seules la ligne `r lignes_pb`, la colonne `r colonnes_pb` et la diagonale principale valent `r cible + ecart` au lieu de `r cible`. La case commune à ces trois sommes est la case [`r lignes_pb`, `r colonnes_pb`], qui vaut `r candidat[lignes_pb, colonnes_pb]` : il faut la diminuer de `r ecart`, donc la remplacer par **`r candidat[lignes_pb, colonnes_pb] - ecart`**. Vérification :
+
+```{r A3-c-correction}
+candidat_corrige <- candidat
+candidat_corrige[lignes_pb, colonnes_pb] <- candidat[lignes_pb, colonnes_pb] - ecart
+candidat_corrige
+est_magique(candidat_corrige)
+```
+
+Après correction, `candidat` devient magique (et contient bien les entiers de 1 à 9).
+
 ## A4
 
 ## A5

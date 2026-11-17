@@ -1602,6 +1602,74 @@ l’attribut <code>dim</code> : <code>X01</code> est bien une matrice 6 ×
 </div>
 <div id="a3" class="section level2">
 <h2>A3</h2>
+<p><strong>a.</strong> Sommes des lignes, des colonnes, de la diagonale
+et de l’anti-diagonale de <code>durer</code> :</p>
+<pre class="r"><code>durer</code></pre>
+<pre><code>##      [,1] [,2] [,3] [,4]
+## [1,]   16    3    2   13
+## [2,]    5   10   11    8
+## [3,]    9    6    7   12
+## [4,]    4   15   14    1</code></pre>
+<pre class="r"><code>rowSums(durer)</code></pre>
+<pre><code>## [1] 34 34 34 34</code></pre>
+<pre class="r"><code>colSums(durer)</code></pre>
+<pre><code>## [1] 34 34 34 34</code></pre>
+<pre class="r"><code>sum(diag(durer))</code></pre>
+<pre><code>## [1] 34</code></pre>
+<pre class="r"><code>sum(diag(durer[, ncol(durer):1]))   # anti-diagonale</code></pre>
+<pre><code>## [1] 34</code></pre>
+<p>Toutes ces sommes valent 34 : le carré de Dürer est magique.</p>
+<p><strong>b.</strong> Une seule instruction qui teste si une matrice
+est magique : on regroupe toutes les sommes dans un vecteur et on
+vérifie qu’il n’y a qu’une seule valeur distincte.</p>
+<pre class="r"><code>est_magique &lt;- function(M) length(unique(c(rowSums(M), colSums(M), sum(diag(M)), sum(diag(M[, ncol(M):1]))))) == 1
+est_magique(durer)</code></pre>
+<pre><code>## [1] TRUE</code></pre>
+<pre class="r"><code>est_magique(candidat)</code></pre>
+<pre><code>## [1] FALSE</code></pre>
+<p><code>durer</code> est magique (TRUE), <code>candidat</code> ne l’est
+pas (FALSE).</p>
+<p><strong>c.</strong> Diagnostic de <code>candidat</code> :</p>
+<pre class="r"><code>candidat</code></pre>
+<pre><code>##      [,1] [,2] [,3]
+## [1,]    8    1    6
+## [2,]    3    5    7
+## [3,]    4    9    3</code></pre>
+<pre class="r"><code>rowSums(candidat)</code></pre>
+<pre><code>## [1] 15 15 16</code></pre>
+<pre class="r"><code>colSums(candidat)</code></pre>
+<pre><code>## [1] 15 15 16</code></pre>
+<pre class="r"><code>sum(diag(candidat))</code></pre>
+<pre><code>## [1] 16</code></pre>
+<pre class="r"><code>sum(diag(candidat[, ncol(candidat):1]))</code></pre>
+<pre><code>## [1] 15</code></pre>
+<p>La somme attendue est 15 (c’est la valeur la plus fréquente, et celle
+de l’anti-diagonale). Repérons ce qui s’en écarte :</p>
+<pre class="r"><code>cible &lt;- 15
+lignes_pb   &lt;- which(rowSums(candidat) != cible)
+colonnes_pb &lt;- which(colSums(candidat) != cible)
+lignes_pb</code></pre>
+<pre><code>## [1] 3</code></pre>
+<pre class="r"><code>colonnes_pb</code></pre>
+<pre><code>## [1] 3</code></pre>
+<pre class="r"><code>ecart &lt;- rowSums(candidat)[lignes_pb] - cible
+ecart</code></pre>
+<pre><code>## [1] 1</code></pre>
+<p>Seules la ligne 3, la colonne 3 et la diagonale principale valent 16
+au lieu de 15. La case commune à ces trois sommes est la case [3, 3],
+qui vaut 3 : il faut la diminuer de 1, donc la remplacer par
+<strong>2</strong>. Vérification :</p>
+<pre class="r"><code>candidat_corrige &lt;- candidat
+candidat_corrige[lignes_pb, colonnes_pb] &lt;- candidat[lignes_pb, colonnes_pb] - ecart
+candidat_corrige</code></pre>
+<pre><code>##      [,1] [,2] [,3]
+## [1,]    8    1    6
+## [2,]    3    5    7
+## [3,]    4    9    2</code></pre>
+<pre class="r"><code>est_magique(candidat_corrige)</code></pre>
+<pre><code>## [1] TRUE</code></pre>
+<p>Après correction, <code>candidat</code> devient magique (et contient
+bien les entiers de 1 à 9).</p>
 </div>
 <div id="a4" class="section level2">
 <h2>A4</h2>
