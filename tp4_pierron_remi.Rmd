@@ -778,3 +778,46 @@ tous_mots[longueurs == max(longueurs)]
 Le mot le plus long est **« `r unique(tous_mots[longueurs == max(longueurs)])` »**, avec `r max(longueurs)` lettres.
 
 ## D5
+
+**a.** Test de Student sur le jeu `sleep` :
+
+```{r D5-a}
+test <- t.test(extra ~ group, data = sleep)
+test
+class(test)
+names(test)
+test$estimate
+diff_moy <- unname(test$estimate[1] - test$estimate[2])
+ic <- test$conf.int
+diff_moy
+ic
+test$p.value
+```
+
+Le résultat de `t.test()` est une liste (de classe `htest`) dont on extrait les éléments par leur nom. La durée de sommeil supplémentaire moyenne est de `r test$estimate[1]` h avec le somnifère 1 et de `r test$estimate[2]` h avec le somnifère 2, soit une **différence des moyennes (groupe 1 − groupe 2) de `r round(diff_moy, 2)` h**. L'**intervalle de confiance à 95 %** de cette différence est [`r round(ic[1], 2)` ; `r round(ic[2], 2)`] et la **p-valeur** vaut **`r round(test$p.value, 3)`**. Comme l'intervalle contient 0 et que la p-valeur est supérieure à 0,05, on ne peut pas conclure, au seuil de 5 %, à une différence significative entre les deux somnifères.
+
+**b.** Modèle linéaire `mpg ~ wt + hp` :
+
+```{r D5-b}
+modele <- lm(mpg ~ wt + hp, data = mtcars)
+names(modele)
+coefs <- modele$coefficients
+coefs
+
+resume <- summary(modele)
+names(resume)
+resume$coefficients
+r2 <- resume$r.squared
+r2
+```
+
+Résidu le plus grand en valeur absolue :
+
+```{r D5-b-residus}
+residus <- modele$residuals
+voiture_max <- names(which.max(abs(residus)))
+voiture_max
+residus[voiture_max]
+```
+
+Le modèle estimé est $\widehat{\text{mpg}} = `r round(coefs[1], 2)` `r round(coefs["wt"], 2)` \times \text{wt} `r round(coefs["hp"], 4)` \times \text{hp}$ : à puissance égale, chaque millier de livres supplémentaire (`wt` est exprimé en milliers de livres, soit environ 454 kg) fait perdre environ `r abs(round(coefs["wt"], 2))` miles par gallon, et à poids égal chaque cheval supplémentaire en fait perdre `r abs(round(coefs["hp"], 3))`. Le $R^2$ vaut **`r round(r2, 3)`** : le poids et la puissance expliquent environ `r round(100 * r2)` % de la variabilité de la consommation. La voiture dont le résidu est le plus grand en valeur absolue est la **`r voiture_max`** (résidu de `r round(residus[voiture_max], 2)` mpg) : elle consomme beaucoup moins que ce que prévoit le modèle pour son poids et sa puissance.
