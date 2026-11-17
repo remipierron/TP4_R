@@ -15,6 +15,8 @@ knitr::opts_chunk$set(echo = TRUE)
 source("donnees_tp4.R")
 ```
 
+Dépôt GitHub du TP : <https://github.com/remipierron/TP4_R>
+
 # Partie A
 
 ## A1
