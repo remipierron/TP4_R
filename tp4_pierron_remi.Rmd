@@ -66,6 +66,44 @@ Sans `drop = FALSE`, `B[, "C1"]` renverrait un simple vecteur nommé ; avec, on 
 
 ## A2
 
+`rnorm()` attend l'**écart-type** (`sd`) et non la variance : pour une variance de 10, on prend `sd = sqrt(10)`. On tire 6 × 6 = 36 valeurs.
+
+```{r A2-creation}
+set.seed(4)
+X <- matrix(rnorm(36, mean = 3, sd = sqrt(10)), nrow = 6)
+round(X, 2)
+```
+
+**a.** Nombre d'éléments supérieurs à 3 :
+
+```{r A2-a}
+sum(X > 3)
+```
+
+`X > 3` donne une matrice de `TRUE`/`FALSE`, et `sum()` compte les `TRUE` : **`r sum(X > 3)` éléments** sur 36 sont supérieurs à 3.
+
+**b.** Positions du minimum et du maximum :
+
+```{r A2-b}
+pos_min <- which(X == min(X), arr.ind = TRUE)
+pos_max <- which(X == max(X), arr.ind = TRUE)
+pos_min
+pos_max
+```
+
+Le minimum (`r round(min(X), 2)`) est en ligne `r pos_min[1, "row"]`, colonne `r pos_min[1, "col"]` ; le maximum (`r round(max(X), 2)`) est en ligne `r pos_max[1, "row"]`, colonne `r pos_max[1, "col"]`.
+
+**c.** Matrice indicatrice `X01` en une seule instruction :
+
+```{r A2-c}
+X01 <- (X > 3) * 1
+X01
+dim(X01)
+is.matrix(X01)
+```
+
+Multiplier la matrice logique `X > 3` par 1 convertit `TRUE` en 1 et `FALSE` en 0, tout en conservant l'attribut `dim` : `X01` est bien une matrice `r nrow(X01)` × `r ncol(X01)`.
+
 ## A3
 
 ## A4
