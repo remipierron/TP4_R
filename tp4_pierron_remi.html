@@ -1622,10 +1622,11 @@ et de l’anti-diagonale de <code>durer</code> :</p>
 <p><strong>b.</strong> Une seule instruction qui teste si une matrice
 est magique : on regroupe toutes les sommes dans un vecteur et on
 vérifie qu’il n’y a qu’une seule valeur distincte.</p>
-<pre class="r"><code>est_magique &lt;- function(M) length(unique(c(rowSums(M), colSums(M), sum(diag(M)), sum(diag(M[, ncol(M):1]))))) == 1
-est_magique(durer)</code></pre>
+<pre class="r"><code>magique_durer &lt;- length(unique(c(rowSums(durer), colSums(durer), sum(diag(durer)), sum(diag(durer[, ncol(durer):1]))))) == 1
+magique_durer</code></pre>
 <pre><code>## [1] TRUE</code></pre>
-<pre class="r"><code>est_magique(candidat)</code></pre>
+<pre class="r"><code>magique_candidat &lt;- length(unique(c(rowSums(candidat), colSums(candidat), sum(diag(candidat)), sum(diag(candidat[, ncol(candidat):1]))))) == 1
+magique_candidat</code></pre>
 <pre><code>## [1] FALSE</code></pre>
 <p><code>durer</code> est magique (TRUE), <code>candidat</code> ne l’est
 pas (FALSE).</p>
@@ -1666,7 +1667,7 @@ candidat_corrige</code></pre>
 ## [1,]    8    1    6
 ## [2,]    3    5    7
 ## [3,]    4    9    2</code></pre>
-<pre class="r"><code>est_magique(candidat_corrige)</code></pre>
+<pre class="r"><code>length(unique(c(rowSums(candidat_corrige), colSums(candidat_corrige), sum(diag(candidat_corrige)), sum(diag(candidat_corrige[, ncol(candidat_corrige):1]))))) == 1</code></pre>
 <pre><code>## [1] TRUE</code></pre>
 <p>Après correction, <code>candidat</code> devient magique (et contient
 bien les entiers de 1 à 9).</p>
