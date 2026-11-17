@@ -163,6 +163,41 @@ Après correction, `candidat` devient magique (et contient bien les entiers de 1
 
 ## A4
 
+`outer(1:10, 1:10)` calcule le produit de toutes les paires $(i, j)$. On nomme les lignes et colonnes pour la lisibilité :
+
+```{r A4-creation}
+table_mult <- outer(1:10, 1:10)
+dimnames(table_mult) <- list(1:10, 1:10)
+table_mult
+```
+
+**a.** Nombre de produits distincts :
+
+```{r A4-a}
+length(unique(as.vector(table_mult)))
+```
+
+La table contient 100 cases mais seulement **`r length(unique(as.vector(table_mult)))` produits distincts** : beaucoup de valeurs se répètent (par symétrie, $i \times j = j \times i$, et par exemple $12 = 2 \times 6 = 3 \times 4$).
+
+**b.** Proportion de cases contenant un nombre pair :
+
+```{r A4-b}
+mean(table_mult %% 2 == 0)
+```
+
+`table_mult %% 2 == 0` est une matrice logique ; sa moyenne donne la proportion de `TRUE`. **`r 100 * mean(table_mult %% 2 == 0)` %** des cases sont paires : un produit n'est impair que si les deux facteurs sont impairs, soit 5 × 5 = 25 cases sur 100.
+
+**c.** Valeurs strictement au-dessus de la diagonale :
+
+```{r A4-c}
+upper.tri(table_mult)[1:4, 1:4]   # aperçu du masque logique
+au_dessus <- table_mult[upper.tri(table_mult)]
+au_dessus
+length(au_dessus)
+```
+
+`upper.tri()` renvoie une matrice logique valant `TRUE` strictement au-dessus de la diagonale ; elle sert d'index. On obtient **`r length(au_dessus)` valeurs**, soit $(100 - 10) / 2$ : les 100 cases moins les 10 de la diagonale, divisées par deux puisque la table est symétrique.
+
 ## A5
 
 # Partie B
