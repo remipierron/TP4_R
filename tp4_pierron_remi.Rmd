@@ -354,6 +354,72 @@ Le déterminant vaut `r signif(det(M4), 3)`, c'est-à-dire **0** aux erreurs d'a
 
 ## B3
 
+```{r B3-donnees}
+P
+parts0
+```
+
+**a.** Chaque ligne de `P` doit sommer à 1 :
+
+```{r B3-a}
+rowSums(P)
+all(abs(rowSums(P) - 1) < 1e-12)
+```
+
+Toutes les lignes somment à 1 (on compare avec une tolérance, à cause des arrondis en virgule flottante) : `P` est bien une matrice de transition.
+
+**b.** Parts de marché dans 1, 2 et 3 mois : on multiplie à chaque fois par `P`.
+
+```{r B3-b}
+parts1 <- parts0 %*% P
+parts2 <- parts1 %*% P
+parts3 <- parts2 %*% P
+evolution <- rbind(parts0, parts1, parts2, parts3)
+rownames(evolution) <- paste("mois", 0:3)
+round(evolution, 4)
+```
+
+L'opérateur A perd des parts (de 50 % à `r round(100 * parts3[1, "A"], 1)` % en 3 mois), B en gagne (de 30 % à `r round(100 * parts3[1, "B"], 1)` %) et C baisse légèrement (de 20 % à `r round(100 * parts3[1, "C"], 1)` %).
+
+**c.** Parts dans 12 mois : $P^{12} = P^8 \times P^4$, et on obtient $P^2$, $P^4$, $P^8$ par élévations au carré successives.
+
+```{r B3-c}
+P2 <- P %*% P
+P4 <- P2 %*% P2
+P8 <- P4 %*% P4
+P12 <- P8 %*% P4
+parts12 <- parts0 %*% P12
+round(parts12, 4)
+```
+
+Dans 12 mois, les parts de marché seraient d'environ **`r round(100 * parts12[1, "A"], 1)` % pour A, `r round(100 * parts12[1, "B"], 1)` % pour B et `r round(100 * parts12[1, "C"], 1)` % pour C**.
+
+**d.** $P^{64}$ par élévations au carré successives ($P^{16}$, $P^{32}$, $P^{64}$) :
+
+```{r B3-d}
+P16 <- P8 %*% P8
+P32 <- P16 %*% P16
+P64 <- P32 %*% P32
+round(P64, 6)
+```
+
+Les trois lignes de $P^{64}$ sont **identiques**. La ligne $i$ donne la répartition des clients au bout de 64 mois sachant qu'ils étaient au départ chez l'opérateur $i$ : à long terme, cette répartition **ne dépend plus de l'opérateur de départ**. La chaîne converge vers un équilibre où A détient environ `r round(100 * P64[1, "A"], 1)` % du marché, B `r round(100 * P64[1, "B"], 1)` % et C `r round(100 * P64[1, "C"], 1)` %, quelles que soient les parts initiales.
+
+**e.** Distribution stationnaire avec `eigen()` : on cherche le vecteur propre de $P^\top$ associé à la valeur propre 1, puis on le normalise pour que ses composantes somment à 1.
+
+```{r B3-e}
+decomp <- eigen(t(P))
+decomp$values
+v <- decomp$vectors[, which.min(abs(decomp$values - 1))]
+pi_stat <- v / sum(v)
+names(pi_stat) <- colnames(P)
+pi_stat
+pi_stat %*% P                                  # vérification : pi P = pi
+all.equal(as.vector(P64[1, ]), as.vector(pi_stat))
+```
+
+La distribution stationnaire est $\pi \approx$ (`r paste(round(pi_stat, 4), collapse = " ; ")`), soit exactement (22/47 ; 16/47 ; 9/47). Elle est identique à chacune des lignes de $P^{64}$ (`all.equal()` renvoie `TRUE`) : la question d retrouve numériquement l'équilibre de long terme que `eigen()` donne directement.
+
 # Partie C
 
 ## C1
