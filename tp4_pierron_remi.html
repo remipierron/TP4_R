@@ -2007,6 +2007,43 @@ long terme que <code>eigen()</code> donne directement.</p>
 <h1>Partie C</h1>
 <div id="c1" class="section level2">
 <h2>C1</h2>
+<p>Structure de l’array :</p>
+<pre class="r"><code>dim(Titanic)</code></pre>
+<pre><code>## [1] 4 2 2 2</code></pre>
+<pre class="r"><code>dimnames(Titanic)</code></pre>
+<pre><code>## $Class
+## [1] &quot;1st&quot;  &quot;2nd&quot;  &quot;3rd&quot;  &quot;Crew&quot;
+## 
+## $Sex
+## [1] &quot;Male&quot;   &quot;Female&quot;
+## 
+## $Age
+## [1] &quot;Child&quot; &quot;Adult&quot;
+## 
+## $Survived
+## [1] &quot;No&quot;  &quot;Yes&quot;</code></pre>
+<p>Nombre total de personnes à bord : on somme toutes les cases de
+l’array.</p>
+<pre class="r"><code>total &lt;- sum(Titanic)
+total</code></pre>
+<pre><code>## [1] 2201</code></pre>
+<p>Nombre de personnes par classe : on garde la dimension 1
+(<code>Class</code>) et on somme sur les autres.</p>
+<pre class="r"><code>par_classe &lt;- apply(Titanic, 1, sum)
+par_classe</code></pre>
+<pre><code>##  1st  2nd  3rd Crew 
+##  325  285  706  885</code></pre>
+<pre class="r"><code>round(100 * prop.table(par_classe), 1)</code></pre>
+<pre><code>##  1st  2nd  3rd Crew 
+## 14.8 12.9 32.1 40.2</code></pre>
+<pre class="r"><code>part_equipage &lt;- par_classe[&quot;Crew&quot;] / total
+part_equipage</code></pre>
+<pre><code>##    Crew 
+## 0.40209</code></pre>
+<p>Il y avait <strong>2201 personnes</strong> à bord : 325 en
+1<sup>re</sup> classe, 285 en 2<sup>e</sup>, 706 en 3<sup>e</sup> et 885
+membres d’équipage. L’équipage représentait <strong>40.2 %</strong> des
+personnes à bord, soit le groupe le plus nombreux.</p>
 </div>
 <div id="c2" class="section level2">
 <h2>C2</h2>

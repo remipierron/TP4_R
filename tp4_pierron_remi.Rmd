@@ -424,6 +424,35 @@ La distribution stationnaire est $\pi \approx$ (`r paste(round(pi_stat, 4), coll
 
 ## C1
 
+Structure de l'array :
+
+```{r C1-structure}
+dim(Titanic)
+dimnames(Titanic)
+```
+
+Nombre total de personnes à bord : on somme toutes les cases de l'array.
+
+```{r C1-total}
+total <- sum(Titanic)
+total
+```
+
+Nombre de personnes par classe : on garde la dimension 1 (`Class`) et on somme sur les autres.
+
+```{r C1-classe}
+par_classe <- apply(Titanic, 1, sum)
+par_classe
+round(100 * prop.table(par_classe), 1)
+```
+
+```{r C1-equipage}
+part_equipage <- par_classe["Crew"] / total
+part_equipage
+```
+
+Il y avait **`r total` personnes** à bord : `r par_classe["1st"]` en 1^re^ classe, `r par_classe["2nd"]` en 2^e^, `r par_classe["3rd"]` en 3^e^ et `r par_classe["Crew"]` membres d'équipage. L'équipage représentait **`r round(100 * part_equipage, 1)` %** des personnes à bord, soit le groupe le plus nombreux.
+
 ## C2
 
 ## C3
