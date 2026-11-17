@@ -1,0 +1,107 @@
+---
+title: "TP 4 : Matrices et listes"
+subtitle: "Introduction au langage R · Cnam · USSI6B-1"
+author: "Rémi Pierron"
+date: "`r format(Sys.Date(), '%d/%m/%Y')`"
+output:
+  html_document:
+    toc: true
+    toc_float: true
+    number_sections: false
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+source("donnees_tp4.R")
+```
+
+# Partie A
+
+## A1
+
+Création de `A` (remplie par colonne, comportement par défaut) et de `B` (remplie par ligne avec `byrow = TRUE`) :
+
+```{r A1-creation}
+A <- matrix(1:25, nrow = 5)
+B <- matrix(1:25, nrow = 5, byrow = TRUE)
+A
+B
+```
+
+Vérification en une seule instruction que `B` est la transposée de `A` :
+
+```{r A1-transposee}
+identical(B, t(A))
+```
+
+`identical()` renvoie `TRUE` : `B` est bien la transposée de `A`. Remplir par ligne revient à remplir par colonne puis à transposer.
+
+Nommage des lignes et des colonnes de `B` :
+
+```{r A1-noms}
+rownames(B) <- paste0("L", 1:5)
+colnames(B) <- paste0("C", 1:5)
+B
+```
+
+**a.** La 3^e^ colonne de `B` :
+
+```{r A1-a}
+B[, 3]
+```
+
+**b.** Les lignes 1 et 5 de `B` :
+
+```{r A1-b}
+B[c(1, 5), ]
+```
+
+**c.** La colonne `C1` de `B`, par son nom, sous forme de matrice :
+
+```{r A1-c}
+B[, "C1", drop = FALSE]
+```
+
+Sans `drop = FALSE`, `B[, "C1"]` renverrait un simple vecteur nommé ; avec, on garde une matrice 5 × 1.
+
+## A2
+
+## A3
+
+## A4
+
+## A5
+
+# Partie B
+
+## B1
+
+## B2
+
+## B3
+
+# Partie C
+
+## C1
+
+## C2
+
+## C3
+
+## C4
+
+## C5
+
+## C6
+
+# Partie D
+
+## D1
+
+## D2
+
+## D3
+
+## D4
+
+## D5
