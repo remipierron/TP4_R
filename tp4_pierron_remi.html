@@ -2047,6 +2047,43 @@ personnes à bord, soit le groupe le plus nombreux.</p>
 </div>
 <div id="c2" class="section level2">
 <h2>C2</h2>
+<p><strong>Taux de survie global</strong> : nombre de survivants (couche
+<code>Survived = &quot;Yes&quot;</code>) divisé par le total.</p>
+<pre class="r"><code>survie_globale &lt;- 100 * sum(Titanic[, , , &quot;Yes&quot;]) / sum(Titanic)
+round(survie_globale, 1)</code></pre>
+<pre><code>## [1] 32.3</code></pre>
+<p><strong>Taux de survie par classe</strong> : on agrège en classe ×
+survie, puis <code>prop.table(..., margin = 1)</code> divise chaque
+ligne par son total.</p>
+<pre class="r"><code>classe_survie &lt;- apply(Titanic, c(1, 4), sum)
+classe_survie</code></pre>
+<pre><code>##       Survived
+## Class   No Yes
+##   1st  122 203
+##   2nd  167 118
+##   3rd  528 178
+##   Crew 673 212</code></pre>
+<pre class="r"><code>survie_classe &lt;- round(100 * prop.table(classe_survie, margin = 1)[, &quot;Yes&quot;], 1)
+survie_classe</code></pre>
+<pre><code>##  1st  2nd  3rd Crew 
+## 62.5 41.4 25.2 24.0</code></pre>
+<p><strong>Taux de survie par sexe</strong> : même démarche en gardant
+les dimensions 2 (sexe) et 4 (survie).</p>
+<pre class="r"><code>sexe_survie &lt;- apply(Titanic, c(2, 4), sum)
+sexe_survie</code></pre>
+<pre><code>##         Survived
+## Sex        No Yes
+##   Male   1364 367
+##   Female  126 344</code></pre>
+<pre class="r"><code>survie_sexe &lt;- round(100 * prop.table(sexe_survie, margin = 1)[, &quot;Yes&quot;], 1)
+survie_sexe</code></pre>
+<pre><code>##   Male Female 
+##   21.2   73.2</code></pre>
+<p>Globalement, seulement <strong>32.3 %</strong> des personnes à bord
+ont survécu. Le taux de survie décroît avec la classe : 62.5 % en
+1<sup>re</sup>, 41.4 % en 2<sup>e</sup>, 25.2 % en 3<sup>e</sup> et 24 %
+pour l’équipage. L’écart est encore plus marqué selon le sexe : 73.2 %
+des femmes ont survécu contre 21.2 % des hommes.</p>
 </div>
 <div id="c3" class="section level2">
 <h2>C3</h2>
