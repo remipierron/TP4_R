@@ -2152,9 +2152,103 @@ celles de 3<sup>e</sup> classe.</p>
 </div>
 <div id="c5" class="section level2">
 <h2>C5</h2>
+<p>On extrait la sous-partie « enfants » de l’array
+(<code>Age = &quot;Child&quot;</code>), ce qui donne un array classe × sexe ×
+survie, puis on agrège en classe × survie :</p>
+<pre class="r"><code>enfants &lt;- Titanic[, , &quot;Child&quot;, ]
+enfants_classe &lt;- apply(enfants, c(1, 3), sum)
+enfants_classe</code></pre>
+<pre><code>##       Survived
+## Class  No Yes
+##   1st   0   6
+##   2nd   0  24
+##   3rd  52  27
+##   Crew  0   0</code></pre>
+<pre class="r"><code>nb_enfants   &lt;- rowSums(enfants_classe)
+nb_survivants &lt;- enfants_classe[, &quot;Yes&quot;]
+nb_enfants</code></pre>
+<pre><code>##  1st  2nd  3rd Crew 
+##    6   24   79    0</code></pre>
+<pre class="r"><code>nb_survivants</code></pre>
+<pre><code>##  1st  2nd  3rd Crew 
+##    6   24   27    0</code></pre>
+<p>Vérification : tous les enfants de 1<sup>re</sup> et 2<sup>e</sup>
+classe ont-ils survécu ?</p>
+<pre class="r"><code>all(enfants_classe[c(&quot;1st&quot;, &quot;2nd&quot;), &quot;No&quot;] == 0)</code></pre>
+<pre><code>## [1] TRUE</code></pre>
+<p>Il y avait 109 enfants à bord : 6 en 1<sup>re</sup> classe, 24 en
+2<sup>e</sup>, 79 en 3<sup>e</sup> et 0 dans l’équipage (ce qui est
+logique). Parmi eux, 57 ont survécu : 6 en 1<sup>re</sup>, 24 en
+2<sup>e</sup> et seulement 27 en 3<sup>e</sup>. <strong>Oui, tous les
+enfants de 1<sup>re</sup> et 2<sup>e</sup> classe ont survécu</strong>,
+alors qu’en 3<sup>e</sup> classe 52 enfants sur 79 sont morts, soit
+environ 66 %.</p>
 </div>
 <div id="c6" class="section level2">
 <h2>C6</h2>
+<p>Conversion en data frame :</p>
+<pre class="r"><code>titanic_df &lt;- as.data.frame(Titanic)
+dim(titanic_df)</code></pre>
+<pre><code>## [1] 32  5</code></pre>
+<pre class="r"><code>head(titanic_df, 10)</code></pre>
+<pre><code>##    Class    Sex   Age Survived Freq
+## 1    1st   Male Child       No    0
+## 2    2nd   Male Child       No    0
+## 3    3rd   Male Child       No   35
+## 4   Crew   Male Child       No    0
+## 5    1st Female Child       No    0
+## 6    2nd Female Child       No    0
+## 7    3rd Female Child       No   17
+## 8   Crew Female Child       No    0
+## 9    1st   Male Adult       No  118
+## 10   2nd   Male Adult       No  154</code></pre>
+<pre class="r"><code>str(titanic_df)</code></pre>
+<pre><code>## &#39;data.frame&#39;:    32 obs. of  5 variables:
+##  $ Class   : Factor w/ 4 levels &quot;1st&quot;,&quot;2nd&quot;,&quot;3rd&quot;,..: 1 2 3 4 1 2 3 4 1 2 ...
+##  $ Sex     : Factor w/ 2 levels &quot;Male&quot;,&quot;Female&quot;: 1 1 1 1 2 2 2 2 1 1 ...
+##  $ Age     : Factor w/ 2 levels &quot;Child&quot;,&quot;Adult&quot;: 1 1 1 1 1 1 1 1 2 2 ...
+##  $ Survived: Factor w/ 2 levels &quot;No&quot;,&quot;Yes&quot;: 1 1 1 1 1 1 1 1 1 1 ...
+##  $ Freq    : num  0 0 35 0 0 0 17 0 118 154 ...</code></pre>
+<p>On obtient <strong>32 lignes</strong> : une par case de l’array,
+c’est-à-dire une par combinaison des modalités, soit <span class="math inline">\(4 \times 2 \times 2 \times 2 = 32\)</span>. Les
+quatre dimensions deviennent quatre colonnes (facteurs) et l’effectif de
+chaque case est stocké dans une cinquième colonne <code>Freq</code>. Les
+combinaisons vides (par exemple les enfants de l’équipage) sont
+conservées avec <code>Freq = 0</code>.</p>
+<p><strong>Avec <code>xtabs()</code></strong> : on reconstruit le
+tableau classe × survie en sommant <code>Freq</code>, puis on calcule
+les pourcentages par ligne.</p>
+<pre class="r"><code>tab_xtabs &lt;- xtabs(Freq ~ Class + Survived, data = titanic_df)
+tab_xtabs</code></pre>
+<pre><code>##       Survived
+## Class   No Yes
+##   1st  122 203
+##   2nd  167 118
+##   3rd  528 178
+##   Crew 673 212</code></pre>
+<pre class="r"><code>round(100 * prop.table(tab_xtabs, margin = 1), 1)</code></pre>
+<pre><code>##       Survived
+## Class    No  Yes
+##   1st  37.5 62.5
+##   2nd  58.6 41.4
+##   3rd  74.8 25.2
+##   Crew 76.0 24.0</code></pre>
+<p><strong>Avec <code>aggregate()</code></strong> : on somme
+<code>Freq</code> par classe, pour les survivants puis pour
+l’ensemble.</p>
+<pre class="r"><code>survivants &lt;- aggregate(Freq ~ Class, data = titanic_df[titanic_df$Survived == &quot;Yes&quot;, ], FUN = sum)
+total_classe &lt;- aggregate(Freq ~ Class, data = titanic_df, FUN = sum)
+survie_df &lt;- data.frame(Class = total_classe$Class,
+                        taux_survie = round(100 * survivants$Freq / total_classe$Freq, 1))
+survie_df</code></pre>
+<pre><code>##   Class taux_survie
+## 1   1st        62.5
+## 2   2nd        41.4
+## 3   3rd        25.2
+## 4  Crew        24.0</code></pre>
+<p>Les deux méthodes redonnent exactement les taux de survie par classe
+de la question C2 (1st : 62.5 %, 2nd : 41.4 %, 3rd : 25.2 %, Crew : 24
+%).</p>
 </div>
 </div>
 <div id="partie-d" class="section level1">

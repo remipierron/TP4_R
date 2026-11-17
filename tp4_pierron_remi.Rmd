@@ -539,6 +539,37 @@ Il y avait `r sum(nb_enfants)` enfants à bord : `r nb_enfants["1st"]` en 1^re^ 
 
 ## C6
 
+Conversion en data frame :
+
+```{r C6-conversion}
+titanic_df <- as.data.frame(Titanic)
+dim(titanic_df)
+head(titanic_df, 10)
+str(titanic_df)
+```
+
+On obtient **`r nrow(titanic_df)` lignes** : une par case de l'array, c'est-à-dire une par combinaison des modalités, soit $4 \times 2 \times 2 \times 2 = `r prod(dim(Titanic))`$. Les quatre dimensions deviennent quatre colonnes (facteurs) et l'effectif de chaque case est stocké dans une cinquième colonne `Freq`. Les combinaisons vides (par exemple les enfants de l'équipage) sont conservées avec `Freq = 0`.
+
+**Avec `xtabs()`** : on reconstruit le tableau classe × survie en sommant `Freq`, puis on calcule les pourcentages par ligne.
+
+```{r C6-xtabs}
+tab_xtabs <- xtabs(Freq ~ Class + Survived, data = titanic_df)
+tab_xtabs
+round(100 * prop.table(tab_xtabs, margin = 1), 1)
+```
+
+**Avec `aggregate()`** : on somme `Freq` par classe, pour les survivants puis pour l'ensemble.
+
+```{r C6-aggregate}
+survivants <- aggregate(Freq ~ Class, data = titanic_df[titanic_df$Survived == "Yes", ], FUN = sum)
+total_classe <- aggregate(Freq ~ Class, data = titanic_df, FUN = sum)
+survie_df <- data.frame(Class = total_classe$Class,
+                        taux_survie = round(100 * survivants$Freq / total_classe$Freq, 1))
+survie_df
+```
+
+Les deux méthodes redonnent exactement les taux de survie par classe de la question C2 (`r paste0(survie_df$Class, " : ", survie_df$taux_survie, " %", collapse = ", ")`).
+
 # Partie D
 
 ## D1
