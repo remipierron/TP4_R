@@ -2087,6 +2087,39 @@ des femmes ont survécu contre 21.2 % des hommes.</p>
 </div>
 <div id="c3" class="section level2">
 <h2>C3</h2>
+<p>On agrège en sexe × âge × survie (array 2 × 2 × 2), puis on divise la
+couche <code>&quot;Yes&quot;</code> par la somme des deux couches :</p>
+<pre class="r"><code>sexe_age_survie &lt;- apply(Titanic, c(2, 3, 4), sum)
+sexe_age_survie</code></pre>
+<pre><code>## , , Survived = No
+## 
+##         Age
+## Sex      Child Adult
+##   Male      35  1329
+##   Female    17   109
+## 
+## , , Survived = Yes
+## 
+##         Age
+## Sex      Child Adult
+##   Male      29   338
+##   Female    28   316</code></pre>
+<pre class="r"><code>survie_sexe_age &lt;- 100 * sexe_age_survie[, , &quot;Yes&quot;] /
+  (sexe_age_survie[, , &quot;No&quot;] + sexe_age_survie[, , &quot;Yes&quot;])
+round(survie_sexe_age, 1)</code></pre>
+<pre><code>##         Age
+## Sex      Child Adult
+##   Male    45.3  20.3
+##   Female  62.2  74.4</code></pre>
+<p>La règle « les femmes et les enfants d’abord » a été
+<strong>largement appliquée</strong> : les hommes adultes ont de loin le
+plus faible taux de survie (20.3 %), contre 74.4 % pour les femmes
+adultes, 62.2 % pour les filles et 45.3 % pour les garçons. Elle n’a
+cependant pas été appliquée parfaitement : moins de la moitié des
+garçons ont survécu, et les filles ont survécu moins souvent que les
+femmes adultes. Cela s’explique en partie par la classe : la plupart des
+enfants voyageaient en 3<sup>e</sup> classe (voir C5), où l’accès aux
+canots était plus difficile.</p>
 </div>
 <div id="c4" class="section level2">
 <h2>C4</h2>

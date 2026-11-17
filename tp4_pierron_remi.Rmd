@@ -484,6 +484,18 @@ Globalement, seulement **`r round(survie_globale, 1)` %** des personnes à bord 
 
 ## C3
 
+On agrège en sexe × âge × survie (array 2 × 2 × 2), puis on divise la couche `"Yes"` par la somme des deux couches :
+
+```{r C3}
+sexe_age_survie <- apply(Titanic, c(2, 3, 4), sum)
+sexe_age_survie
+survie_sexe_age <- 100 * sexe_age_survie[, , "Yes"] /
+  (sexe_age_survie[, , "No"] + sexe_age_survie[, , "Yes"])
+round(survie_sexe_age, 1)
+```
+
+La règle « les femmes et les enfants d'abord » a été **largement appliquée** : les hommes adultes ont de loin le plus faible taux de survie (`r round(survie_sexe_age["Male", "Adult"], 1)` %), contre `r round(survie_sexe_age["Female", "Adult"], 1)` % pour les femmes adultes, `r round(survie_sexe_age["Female", "Child"], 1)` % pour les filles et `r round(survie_sexe_age["Male", "Child"], 1)` % pour les garçons. Elle n'a cependant pas été appliquée parfaitement : moins de la moitié des garçons ont survécu, et les filles ont survécu moins souvent que les femmes adultes. Cela s'explique en partie par la classe : la plupart des enfants voyageaient en 3^e^ classe (voir C5), où l'accès aux canots était plus difficile.
+
 ## C4
 
 ## C5
