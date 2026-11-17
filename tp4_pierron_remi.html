@@ -2123,6 +2123,32 @@ canots était plus difficile.</p>
 </div>
 <div id="c4" class="section level2">
 <h2>C4</h2>
+<p>Même méthode qu’en C3, en gardant cette fois la classe, le sexe et la
+survie (array 4 × 2 × 2) :</p>
+<pre class="r"><code>classe_sexe_survie &lt;- apply(Titanic, c(1, 2, 4), sum)
+survie_classe_sexe &lt;- 100 * classe_sexe_survie[, , &quot;Yes&quot;] /
+  (classe_sexe_survie[, , &quot;No&quot;] + classe_sexe_survie[, , &quot;Yes&quot;])
+round(survie_classe_sexe, 1)</code></pre>
+<pre><code>##       Sex
+## Class  Male Female
+##   1st  34.4   97.2
+##   2nd  14.0   87.7
+##   3rd  17.3   45.9
+##   Crew 22.3   87.0</code></pre>
+<pre class="r"><code>dim(survie_classe_sexe)</code></pre>
+<pre><code>## [1] 4 2</code></pre>
+<pre class="r"><code>survie_classe_sexe[&quot;3rd&quot;, &quot;Female&quot;]</code></pre>
+<pre><code>## [1] 45.91837</code></pre>
+<pre class="r"><code>survie_classe_sexe[&quot;1st&quot;, &quot;Male&quot;]</code></pre>
+<pre><code>## [1] 34.44444</code></pre>
+<p>Les femmes de 3<sup>e</sup> classe ont survécu à <strong>45.9
+%</strong>, contre <strong>34.4 %</strong> pour les hommes de
+1<sup>re</sup> classe. Une femme de la classe la plus modeste avait donc
+plus de chances de survivre qu’un homme de la classe la plus aisée :
+<strong>le sexe a pesé plus lourd que la classe</strong> dans la survie.
+La classe joue tout de même un rôle important à sexe égal : 97.2 % des
+femmes de 1<sup>re</sup> classe ont survécu, soit deux fois plus que
+celles de 3<sup>e</sup> classe.</p>
 </div>
 <div id="c5" class="section level2">
 <h2>C5</h2>

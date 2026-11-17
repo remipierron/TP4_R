@@ -498,6 +498,23 @@ La règle « les femmes et les enfants d'abord » a été **largement appliquée
 
 ## C4
 
+Même méthode qu'en C3, en gardant cette fois la classe, le sexe et la survie (array 4 × 2 × 2) :
+
+```{r C4}
+classe_sexe_survie <- apply(Titanic, c(1, 2, 4), sum)
+survie_classe_sexe <- 100 * classe_sexe_survie[, , "Yes"] /
+  (classe_sexe_survie[, , "No"] + classe_sexe_survie[, , "Yes"])
+round(survie_classe_sexe, 1)
+dim(survie_classe_sexe)
+```
+
+```{r C4-comparaison}
+survie_classe_sexe["3rd", "Female"]
+survie_classe_sexe["1st", "Male"]
+```
+
+Les femmes de 3^e^ classe ont survécu à **`r round(survie_classe_sexe["3rd", "Female"], 1)` %**, contre **`r round(survie_classe_sexe["1st", "Male"], 1)` %** pour les hommes de 1^re^ classe. Une femme de la classe la plus modeste avait donc plus de chances de survivre qu'un homme de la classe la plus aisée : **le sexe a pesé plus lourd que la classe** dans la survie. La classe joue tout de même un rôle important à sexe égal : `r round(survie_classe_sexe["1st", "Female"], 1)` % des femmes de 1^re^ classe ont survécu, soit deux fois plus que celles de 3^e^ classe.
+
 ## C5
 
 ## C6
