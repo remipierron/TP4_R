@@ -623,6 +623,54 @@ Les deux points les plus piégeux sont donc `l[["c"]]["d"]`, qui renvoie une lis
 
 ## D2
 
+Création de la liste `fiche` (le suffixe `L` dans `2L` force le type entier pour `absences`) :
+
+```{r D2-creation}
+fiche <- list(
+  identite     = list(nom = "Pierron", prenom = "Rémi", annee_naissance = 2000),
+  notes        = c(R = 16, stat = 14, eco = 12.5, anglais = 15),
+  absences     = 2L,
+  commentaires = c("Étudiant assidu et participatif.",
+                   "Bonne maîtrise des matrices et des listes.")
+)
+str(fiche)
+```
+
+**a.** Le prénom, de deux façons différentes :
+
+```{r D2-a}
+fiche$identite$prenom
+fiche[["identite"]][["prenom"]]
+```
+
+Les deux écritures renvoient le contenu « `r fiche$identite$prenom` » : `$` est un raccourci de `[[ ]]` par nom.
+
+**b.** Moyenne des notes à partir de la liste :
+
+```{r D2-b}
+mean(fiche$notes)
+```
+
+La moyenne des notes est de **`r mean(fiche$notes)`**.
+
+**c.** Ajout de l'élément `age` :
+
+```{r D2-c}
+fiche$age <- 2026 - fiche$identite$annee_naissance
+fiche$age
+```
+
+Assigner une valeur à un nom qui n'existe pas encore ajoute l'élément à la fin de la liste : `age` vaut `r fiche$age` ans.
+
+**d.** Suppression de `commentaires` et structure de la liste :
+
+```{r D2-d}
+fiche$commentaires <- NULL
+str(fiche)
+```
+
+Affecter `NULL` à un élément le supprime : la liste contient maintenant `r length(fiche)` éléments (`r paste(names(fiche), collapse = ", ")`).
+
 ## D3
 
 ## D4
