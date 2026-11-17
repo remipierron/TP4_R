@@ -259,7 +259,98 @@ Remarque : `image()` place les lignes de la matrice sur l'axe horizontal. Invers
 
 ## B1
 
+```{r B1-donnees}
+Q
+prix
+cout
+```
+
+**a.** Chiffre d'affaires de chaque magasin : `Q` (3 × 4) multiplié par le vecteur `prix` (4 éléments) donne une matrice 3 × 1. Chaque ligne est la somme des quantités × prix.
+
+```{r B1-a}
+CA_magasin <- Q %*% prix
+colnames(CA_magasin) <- "CA"
+CA_magasin
+```
+
+Le chiffre d'affaires hebdomadaire est de `r CA_magasin["Lyon", 1]` € à Lyon, `r CA_magasin["Lille", 1]` € à Lille et `r CA_magasin["Nantes", 1]` € à Nantes, qui réalise le plus gros CA.
+
+**b.** Marge de chaque magasin : même produit matriciel avec la marge unitaire `prix - cout`.
+
+```{r B1-b}
+prix - cout
+marge_magasin <- Q %*% (prix - cout)
+colnames(marge_magasin) <- "marge"
+marge_magasin
+```
+
+La marge est de `r marge_magasin["Lyon", 1]` € à Lyon, `r marge_magasin["Lille", 1]` € à Lille et `r marge_magasin["Nantes", 1]` € à Nantes. Lille a un CA plus faible que Lyon mais une marge légèrement plus élevée.
+
+**c.** CA par magasin et par produit : multiplier `Q` par la matrice diagonale `diag(prix)` multiplie chaque colonne de `Q` par le prix du produit correspondant. `diag()` perd les noms, on les remet.
+
+```{r B1-c}
+diag(prix)
+CA_detail <- Q %*% diag(prix)
+colnames(CA_detail) <- names(prix)
+CA_detail
+pos_max_CA <- which(CA_detail == max(CA_detail), arr.ind = TRUE)
+pos_max_CA
+```
+
+La combinaison la plus rentable est **`r rownames(CA_detail)[pos_max_CA[1, "row"]]` × `r colnames(CA_detail)[pos_max_CA[1, "col"]]`**, avec un CA de `r max(CA_detail)` €.
+
+**d.** Vérification : les sommes des lignes redonnent le CA de la question a.
+
+```{r B1-d}
+rowSums(CA_detail)
+all.equal(rowSums(CA_detail), CA_magasin[, "CA"])
+```
+
+`all.equal()` renvoie `TRUE` : la somme du CA par produit redonne bien le CA total de chaque magasin.
+
 ## B2
+
+```{r B2-donnees}
+M
+stock
+```
+
+Si $x$ est le vecteur des quantités d'aliments à produire, la quantité de céréale $i$ utilisée est $\sum_j M_{ij} x_j$. Utiliser exactement tout le stock revient à résoudre le système $Mx = \text{stock}$.
+
+**a.** Résolution avec `solve(M, b)` :
+
+```{r B2-a}
+x <- solve(M, stock)
+names(x) <- paste0("aliment", 1:4)
+x
+```
+
+Il faut produire **`r x[1]` t de l'aliment 1, `r x[2]` t de l'aliment 2, `r x[3]` t de l'aliment 3 et `r x[4]` t de l'aliment 4**.
+
+**b.** Vérification : $Mx$ doit redonner le stock.
+
+```{r B2-b}
+M %*% x
+all.equal(as.vector(M %*% x), stock)
+```
+
+On retrouve exactement le stock disponible (`r all.equal(as.vector(M %*% x), stock)`) : la solution est correcte.
+
+**c.** On remplace la 4^e^ ligne par la somme des lignes 1 et 2 :
+
+```{r B2-c}
+M4 <- M
+M4[4, ] <- M[1, ] + M[2, ]
+M4
+det(M4)
+```
+
+```{r B2-c-solve, error = TRUE}
+solve(M4)
+solve(M4, stock)
+```
+
+Le déterminant vaut `r signif(det(M4), 3)`, c'est-à-dire **0** aux erreurs d'arrondi près (les calculs en virgule flottante ne donnent pas exactement 0). `solve()` renvoie une erreur : la matrice est **singulière** (« computationally singular »). En effet, la ligne 4 est une combinaison linéaire des lignes 1 et 2 : les lignes ne sont plus indépendantes, la matrice n'est donc pas inversible et le système n'a pas de solution unique (soit aucune, soit une infinité). Le chunk utilise `error = TRUE` pour que le document se knitte malgré l'erreur.
 
 ## B3
 
