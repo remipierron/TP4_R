@@ -574,6 +574,53 @@ Les deux méthodes redonnent exactement les taux de survie par classe de la ques
 
 ## D1
 
+```{r D1-creation}
+l <- list(a = 1:3, b = "x", c = list(d = TRUE, e = 2.5))
+```
+
+**Prédictions** (écrites avant l'exécution) :
+
+| Instruction | Classe prédite | Contenu prédit |
+|---|---|---|
+| `l[1]` | `list` | une liste d'un seul élément, nommé `a`, qui contient le vecteur `1 2 3` |
+| `l[[1]]` | `integer` | le vecteur `1 2 3` lui-même (sorti de la liste) |
+| `l$c$e` | `numeric` | la valeur `2.5` |
+| `l[["c"]]["d"]` | `list` | une liste d'un élément, nommé `d`, contenant `TRUE` |
+| `length(l)` | `integer` | `3` (les éléments `a`, `b`, `c` : la sous-liste compte pour un seul élément) |
+| `unlist(l)` | `character` | un vecteur nommé de 6 éléments, tout converti en texte : `"1" "2" "3" "x" "TRUE" "2.5"` |
+
+**Exécution :**
+
+```{r D1-execution}
+l[1]
+class(l[1])
+
+l[[1]]
+class(l[[1]])
+
+l$c$e
+class(l$c$e)
+
+l[["c"]]["d"]
+class(l[["c"]]["d"])
+
+length(l)
+class(length(l))
+
+unlist(l)
+class(unlist(l))
+```
+
+**Explications :**
+
+- **`l[1]` vs `l[[1]]`** : c'est l'image du train. `[ ]` détache un wagon et renvoie donc toujours une **liste** (ici une liste d'un élément nommé `a`) ; `[[ ]]` sort le **contenu** du wagon, ici le vecteur d'entiers `1:3` (classe `integer` et non `numeric`, car `1:3` crée des entiers).
+- **`l$c$e`** : `$` fonctionne comme `[[ ]]` par nom. `l$c` renvoie la sous-liste `c`, puis `$e` en extrait le contenu, le nombre `2.5`.
+- **`l[["c"]]["d"]`** : `l[["c"]]` renvoie la sous-liste `c`, mais on y applique ensuite des crochets **simples** : le résultat est donc encore une liste (d'un élément nommé `d`), et non la valeur `TRUE`. Pour obtenir `TRUE`, il faudrait écrire `l[["c"]][["d"]]`.
+- **`length(l)`** vaut 3 : `length()` compte les éléments de premier niveau, sans descendre dans la sous-liste `c` ni dans le vecteur `a`.
+- **`unlist(l)`** aplatit récursivement toute la liste, sous-liste comprise, en un seul vecteur de `r length(unlist(l))` éléments. Un vecteur n'ayant qu'un seul type, R convertit tout vers le type le plus général, ici `character` : les nombres et `TRUE` deviennent du texte. Les noms sont construits automatiquement : `a1`, `a2`, `a3` pour les éléments du vecteur `a`, et `c.d`, `c.e` pour ceux de la sous-liste (nom parent + `.` + nom enfant).
+
+Les deux points les plus piégeux sont donc `l[["c"]]["d"]`, qui renvoie une liste et non `TRUE`, et `unlist(l)`, qui convertit silencieusement tout en texte et génère des noms composés.
+
 ## D2
 
 ## D3
