@@ -2007,9 +2007,17 @@ pi_stat</code></pre>
 ## [1,] 0.4680851 0.3404255 0.1914894</code></pre>
 <pre class="r"><code>all.equal(as.vector(P64[1, ]), as.vector(pi_stat))</code></pre>
 <pre><code>## [1] TRUE</code></pre>
+<p>Vérification de la forme exacte de <span class="math inline">\(\pi\)</span> : multipliée par 47, elle doit donner
+des entiers.</p>
+<pre class="r"><code>pi_stat * 47</code></pre>
+<pre><code>##  A  B  C 
+## 22 16  9</code></pre>
+<pre class="r"><code>all.equal(as.vector(pi_stat), c(22, 16, 9) / 47)</code></pre>
+<pre><code>## [1] TRUE</code></pre>
 <p>La distribution stationnaire est <span class="math inline">\(\pi
-\approx\)</span> (0.4681 ; 0.3404 ; 0.1915), soit exactement (22/47 ;
-16/47 ; 9/47). Elle est identique à chacune des lignes de <span class="math inline">\(P^{64}\)</span> (<code>all.equal()</code> renvoie
+\approx\)</span> (0.4681 ; 0.3404 ; 0.1915). <code>pi_stat * 47</code>
+donne (22 ; 16 ; 9) et <code>all.equal()</code> renvoie TRUE : <span class="math inline">\(\pi\)</span> vaut exactement (22/47 ; 16/47 ;
+9/47). Elle est identique à chacune des lignes de <span class="math inline">\(P^{64}\)</span> (<code>all.equal()</code> renvoie
 <code>TRUE</code>) : la question d retrouve numériquement l’équilibre de
 long terme que <code>eigen()</code> donne directement.</p>
 </div>

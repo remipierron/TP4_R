@@ -428,7 +428,14 @@ pi_stat %*% P                                  # vérification : pi P = pi
 all.equal(as.vector(P64[1, ]), as.vector(pi_stat))
 ```
 
-La distribution stationnaire est $\pi \approx$ (`r paste(round(pi_stat, 4), collapse = " ; ")`), soit exactement (22/47 ; 16/47 ; 9/47). Elle est identique à chacune des lignes de $P^{64}$ (`all.equal()` renvoie `TRUE`) : la question d retrouve numériquement l'équilibre de long terme que `eigen()` donne directement.
+Vérification de la forme exacte de $\pi$ : multipliée par 47, elle doit donner des entiers.
+
+```{r B3-e-exact}
+pi_stat * 47
+all.equal(as.vector(pi_stat), c(22, 16, 9) / 47)
+```
+
+La distribution stationnaire est $\pi \approx$ (`r paste(round(pi_stat, 4), collapse = " ; ")`). `pi_stat * 47` donne (`r paste(round(pi_stat * 47, 6), collapse = " ; ")`) et `all.equal()` renvoie `r isTRUE(all.equal(as.vector(pi_stat), c(22, 16, 9) / 47))` : $\pi$ vaut exactement (22/47 ; 16/47 ; 9/47). Elle est identique à chacune des lignes de $P^{64}$ (`all.equal()` renvoie `TRUE`) : la question d retrouve numériquement l'équilibre de long terme que `eigen()` donne directement.
 
 # Partie C
 
