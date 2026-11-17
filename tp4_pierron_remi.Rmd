@@ -139,10 +139,19 @@ sum(diag(candidat))
 sum(diag(candidat[, ncol(candidat):1]))
 ```
 
-La somme attendue est 15 (c'est la valeur la plus fréquente, et celle de l'anti-diagonale). Repérons ce qui s'en écarte :
+La somme attendue est la valeur la plus fréquente parmi les 8 sommes (3 lignes, 3 colonnes, 2 diagonales) :
+
+```{r A3-c-cible}
+sommes <- c(rowSums(candidat), colSums(candidat),
+            sum(diag(candidat)), sum(diag(candidat[, ncol(candidat):1])))
+table(sommes)
+cible <- as.numeric(names(which.max(table(sommes))))
+cible
+```
+
+La somme la plus fréquente est **`r cible`** (`r max(table(sommes))` sommes sur `r length(sommes)`) : c'est la cible. Repérons ce qui s'en écarte :
 
 ```{r A3-c-diagnostic}
-cible <- 15
 lignes_pb   <- which(rowSums(candidat) != cible)
 colonnes_pb <- which(colSums(candidat) != cible)
 lignes_pb

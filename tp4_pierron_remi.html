@@ -1644,10 +1644,20 @@ pas (FALSE).</p>
 <pre><code>## [1] 16</code></pre>
 <pre class="r"><code>sum(diag(candidat[, ncol(candidat):1]))</code></pre>
 <pre><code>## [1] 15</code></pre>
-<p>La somme attendue est 15 (c’est la valeur la plus fréquente, et celle
-de l’anti-diagonale). Repérons ce qui s’en écarte :</p>
-<pre class="r"><code>cible &lt;- 15
-lignes_pb   &lt;- which(rowSums(candidat) != cible)
+<p>La somme attendue est la valeur la plus fréquente parmi les 8 sommes
+(3 lignes, 3 colonnes, 2 diagonales) :</p>
+<pre class="r"><code>sommes &lt;- c(rowSums(candidat), colSums(candidat),
+            sum(diag(candidat)), sum(diag(candidat[, ncol(candidat):1])))
+table(sommes)</code></pre>
+<pre><code>## sommes
+## 15 16 
+##  5  3</code></pre>
+<pre class="r"><code>cible &lt;- as.numeric(names(which.max(table(sommes))))
+cible</code></pre>
+<pre><code>## [1] 15</code></pre>
+<p>La somme la plus fréquente est <strong>15</strong> (5 sommes sur 8) :
+c’est la cible. Repérons ce qui s’en écarte :</p>
+<pre class="r"><code>lignes_pb   &lt;- which(rowSums(candidat) != cible)
 colonnes_pb &lt;- which(colSums(candidat) != cible)
 lignes_pb</code></pre>
 <pre><code>## [1] 3</code></pre>
