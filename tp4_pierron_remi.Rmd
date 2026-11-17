@@ -200,6 +200,61 @@ length(au_dessus)
 
 ## A5
 
+```{r A5-dim}
+dim(volcano)
+range(volcano)
+```
+
+**a.** Altitude maximale et position(s) :
+
+```{r A5-a}
+max(volcano)
+pos_sommet <- which(volcano == max(volcano), arr.ind = TRUE)
+pos_sommet
+```
+
+L'altitude maximale est de **`r max(volcano)` m**, atteinte en une seule position : ligne `r pos_sommet[1, "row"]`, colonne `r pos_sommet[1, "col"]`.
+
+**b.** Proportion du terrain au-dessus de 150 m :
+
+```{r A5-b}
+mean(volcano > 150)
+```
+
+Environ **`r round(100 * mean(volcano > 150), 1)` %** des points de la grille sont à plus de 150 m.
+
+**c.** Ligne d'altitude moyenne la plus élevée :
+
+```{r A5-c}
+moy_lignes <- rowMeans(volcano)
+which.max(moy_lignes)
+max(moy_lignes)
+```
+
+C'est la **ligne `r which.max(moy_lignes)`**, avec une altitude moyenne de `r round(max(moy_lignes), 1)` m.
+
+**d.** Dénivelé (maximum − minimum) de chaque colonne :
+
+```{r A5-d}
+denivele <- apply(volcano, 2, max) - apply(volcano, 2, min)
+denivele
+which.max(denivele)
+```
+
+La **colonne `r which.max(denivele)`** a le plus fort dénivelé (`r max(denivele)` m) ; c'est aussi la colonne qui contient le sommet.
+
+**e.** Retournement de haut en bas : on inverse l'ordre des lignes.
+
+```{r A5-e, fig.width = 10, fig.height = 5}
+volcano_retourne <- volcano[nrow(volcano):1, ]
+par(mfrow = c(1, 2))
+image(volcano, main = "Original")
+image(volcano_retourne, main = "Retourné de haut en bas")
+par(mfrow = c(1, 1))
+```
+
+Remarque : `image()` place les lignes de la matrice sur l'axe horizontal. Inverser les lignes (retournement « haut-bas » de la matrice) apparaît donc à l'écran comme une symétrie gauche-droite de l'image.
+
 # Partie B
 
 ## B1
