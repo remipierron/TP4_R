@@ -517,6 +517,26 @@ Les femmes de 3^e^ classe ont survécu à **`r round(survie_classe_sexe["3rd", "
 
 ## C5
 
+On extrait la sous-partie « enfants » de l'array (`Age = "Child"`), ce qui donne un array classe × sexe × survie, puis on agrège en classe × survie :
+
+```{r C5}
+enfants <- Titanic[, , "Child", ]
+enfants_classe <- apply(enfants, c(1, 3), sum)
+enfants_classe
+nb_enfants   <- rowSums(enfants_classe)
+nb_survivants <- enfants_classe[, "Yes"]
+nb_enfants
+nb_survivants
+```
+
+Vérification : tous les enfants de 1^re^ et 2^e^ classe ont-ils survécu ?
+
+```{r C5-verif}
+all(enfants_classe[c("1st", "2nd"), "No"] == 0)
+```
+
+Il y avait `r sum(nb_enfants)` enfants à bord : `r nb_enfants["1st"]` en 1^re^ classe, `r nb_enfants["2nd"]` en 2^e^, `r nb_enfants["3rd"]` en 3^e^ et `r nb_enfants["Crew"]` dans l'équipage (ce qui est logique). Parmi eux, `r sum(nb_survivants)` ont survécu : `r nb_survivants["1st"]` en 1^re^, `r nb_survivants["2nd"]` en 2^e^ et seulement `r nb_survivants["3rd"]` en 3^e^. **Oui, tous les enfants de 1^re^ et 2^e^ classe ont survécu**, alors qu'en 3^e^ classe `r enfants_classe["3rd", "No"]` enfants sur `r nb_enfants["3rd"]` sont morts, soit environ `r round(100 * enfants_classe["3rd", "No"] / nb_enfants["3rd"])` %.
+
 ## C6
 
 # Partie D
