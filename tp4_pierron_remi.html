@@ -2429,9 +2429,159 @@ contient maintenant 4 éléments (identite, notes, absences, age).</p>
 </div>
 <div id="d3" class="section level2">
 <h2>D3</h2>
+<pre class="r"><code>str(promo, max.level = 1)</code></pre>
+<pre><code>## List of 5
+##  $ :List of 3
+##  $ :List of 3
+##  $ :List of 3
+##  $ :List of 3
+##  $ :List of 3</code></pre>
+<p><strong>a.</strong> Nombre d’étudiants et nom du 3<sup>e</sup> :</p>
+<pre class="r"><code>length(promo)</code></pre>
+<pre><code>## [1] 5</code></pre>
+<pre class="r"><code>promo[[3]]$nom</code></pre>
+<pre><code>## [1] &quot;Chen&quot;</code></pre>
+<p>La liste contient <strong>5 étudiants</strong> ; le 3<sup>e</sup>
+s’appelle <strong>Chen</strong>.</p>
+<p><strong>b.</strong> Vecteurs des noms et des filières :
+<code>sapply()</code> applique la fonction d’extraction
+<code>&quot;[[&quot;</code> à chaque étudiant, avec l’argument <code>&quot;nom&quot;</code>
+(ou <code>&quot;filiere&quot;</code>), et simplifie le résultat en vecteur.</p>
+<pre class="r"><code>noms &lt;- sapply(promo, &quot;[[&quot;, &quot;nom&quot;)
+filieres &lt;- sapply(promo, &quot;[[&quot;, &quot;filiere&quot;)
+noms</code></pre>
+<pre><code>## [1] &quot;Awa&quot;   &quot;Bruno&quot; &quot;Chen&quot;  &quot;Dina&quot;  &quot;Elias&quot;</code></pre>
+<pre class="r"><code>filieres</code></pre>
+<pre><code>## [1] &quot;info&quot; &quot;stat&quot; &quot;info&quot; &quot;eco&quot;  &quot;stat&quot;</code></pre>
+<p><strong>c.</strong> Liste des vecteurs de notes et nombre de notes
+par étudiant. On utilise <code>lapply()</code>, qui renvoie toujours une
+liste, puisque les vecteurs n’ont pas la même longueur :</p>
+<pre class="r"><code>notes &lt;- lapply(promo, &quot;[[&quot;, &quot;notes&quot;)
+names(notes) &lt;- noms
+notes</code></pre>
+<pre><code>## $Awa
+## [1] 15.0 13.5 17.0
+## 
+## $Bruno
+## [1]  9 12
+## 
+## $Chen
+## [1] 17 15 16 18
+## 
+## $Dina
+## [1] 11.5  9.0
+## 
+## $Elias
+## [1] 12 14 10</code></pre>
+<pre class="r"><code>lengths(notes)</code></pre>
+<pre><code>##   Awa Bruno  Chen  Dina Elias 
+##     3     2     4     2     3</code></pre>
+<p>Awa a 3 notes, Bruno 2, Chen 4, Dina 2 et Elias 3.</p>
+<p><strong>d.</strong> Moyenne de chaque étudiant et data frame
+<code>bilan</code>, trié par moyenne décroissante :</p>
+<pre class="r"><code>moyennes &lt;- sapply(notes, mean)
+moyennes</code></pre>
+<pre><code>##      Awa    Bruno     Chen     Dina    Elias 
+## 15.16667 10.50000 16.50000 10.25000 12.00000</code></pre>
+<pre class="r"><code>bilan &lt;- data.frame(nom      = noms,
+                    filiere  = filieres,
+                    nb_notes = lengths(notes),
+                    moyenne  = round(moyennes, 2))
+bilan &lt;- bilan[order(bilan$moyenne, decreasing = TRUE), ]
+rownames(bilan) &lt;- NULL
+bilan</code></pre>
+<pre><code>##     nom filiere nb_notes moyenne
+## 1  Chen    info        4   16.50
+## 2   Awa    info        3   15.17
+## 3 Elias    stat        3   12.00
+## 4 Bruno    stat        2   10.50
+## 5  Dina     eco        2   10.25</code></pre>
+<p><strong>Chen</strong> a la meilleure moyenne (16.5),
+<strong>Dina</strong> la plus faible (10.25).</p>
+<p><strong>e.</strong> Pourquoi pas une matrice de notes ?</p>
+<pre class="r"><code>str(sapply(promo, &quot;[[&quot;, &quot;notes&quot;))</code></pre>
+<pre><code>## List of 5
+##  $ : num [1:3] 15 13.5 17
+##  $ : num [1:2] 9 12
+##  $ : num [1:4] 17 15 16 18
+##  $ : num [1:2] 11.5 9
+##  $ : num [1:3] 12 14 10</code></pre>
+<p>Une matrice est rectangulaire : chaque ligne doit avoir <strong>le
+même nombre de colonnes</strong>. Or les étudiants ont entre 2 et 4
+notes. Pour faire entrer ces données dans une matrice, il faudrait
+compléter les lignes courtes avec des <code>NA</code>, ou bien
+<code>matrix()</code> recyclerait les valeurs et inventerait des notes.
+D’ailleurs, <code>sapply()</code> n’arrive pas à simplifier les notes en
+matrice et renvoie une liste. De plus, une matrice n’a qu’un seul type :
+on ne pourrait pas y ranger à la fois le nom, la filière (texte) et les
+notes (nombres). La liste, qui accepte des éléments de longueurs et de
+types différents, est la structure adaptée.</p>
 </div>
 <div id="d4" class="section level2">
 <h2>D4</h2>
+<p><strong>a.</strong> Découpage en mots avec <code>strsplit()</code>,
+qui renvoie une liste (un vecteur de mots par phrase) :</p>
+<pre class="r"><code>mots &lt;- strsplit(phrases, &quot; &quot;)
+mots</code></pre>
+<pre><code>## [[1]]
+## [1] &quot;R&quot;           &quot;est&quot;         &quot;un&quot;          &quot;langage&quot;     &quot;pour&quot;       
+## [6] &quot;la&quot;          &quot;statistique&quot;
+## 
+## [[2]]
+## [1] &quot;les&quot;     &quot;listes&quot;  &quot;sont&quot;    &quot;partout&quot; &quot;dans&quot;    &quot;R&quot;      
+## 
+## [[3]]
+## [1] &quot;une&quot;      &quot;liste&quot;    &quot;peut&quot;     &quot;contenir&quot; &quot;une&quot;      &quot;autre&quot;    &quot;liste&quot;   
+## 
+## [[4]]
+## [1] &quot;les&quot;      &quot;data&quot;     &quot;frames&quot;   &quot;sont&quot;     &quot;des&quot;      &quot;listes&quot;   &quot;de&quot;      
+## [8] &quot;colonnes&quot;
+## 
+## [[5]]
+## [1] &quot;R&quot;       &quot;renvoie&quot; &quot;souvent&quot; &quot;des&quot;     &quot;listes&quot;</code></pre>
+<pre class="r"><code>lengths(mots)</code></pre>
+<pre><code>## [1] 7 6 7 8 5</code></pre>
+<p>Les phrases comptent respectivement <strong>7, 6, 7, 8, 5
+mots</strong>.</p>
+<p><strong>b.</strong> Tous les mots dans un seul vecteur, en minuscules
+:</p>
+<pre class="r"><code>tous_mots &lt;- tolower(unlist(mots))
+tous_mots</code></pre>
+<pre><code>##  [1] &quot;r&quot;           &quot;est&quot;         &quot;un&quot;          &quot;langage&quot;     &quot;pour&quot;       
+##  [6] &quot;la&quot;          &quot;statistique&quot; &quot;les&quot;         &quot;listes&quot;      &quot;sont&quot;       
+## [11] &quot;partout&quot;     &quot;dans&quot;        &quot;r&quot;           &quot;une&quot;         &quot;liste&quot;      
+## [16] &quot;peut&quot;        &quot;contenir&quot;    &quot;une&quot;         &quot;autre&quot;       &quot;liste&quot;      
+## [21] &quot;les&quot;         &quot;data&quot;        &quot;frames&quot;      &quot;sont&quot;        &quot;des&quot;        
+## [26] &quot;listes&quot;      &quot;de&quot;          &quot;colonnes&quot;    &quot;r&quot;           &quot;renvoie&quot;    
+## [31] &quot;souvent&quot;     &quot;des&quot;         &quot;listes&quot;</code></pre>
+<pre class="r"><code>length(tous_mots)</code></pre>
+<pre><code>## [1] 33</code></pre>
+<pre class="r"><code>length(unique(tous_mots))</code></pre>
+<pre><code>## [1] 24</code></pre>
+<p>Il y a <strong>33 mots au total</strong>, dont <strong>24
+distincts</strong>. Le passage en minuscules est important : sans lui, «
+R » et « r » ou « Les » et « les » seraient comptés comme des mots
+différents.</p>
+<p><strong>c.</strong> Les mots les plus fréquents :</p>
+<pre class="r"><code>freq &lt;- sort(table(tous_mots), decreasing = TRUE)
+head(freq, 6)</code></pre>
+<pre><code>## tous_mots
+## listes      r    des    les  liste   sont 
+##      3      3      2      2      2      2</code></pre>
+<pre class="r"><code>seuil &lt;- freq[3]                         # fréquence du 3e mot
+names(freq)[freq &gt;= seuil]</code></pre>
+<pre><code>## [1] &quot;listes&quot; &quot;r&quot;      &quot;des&quot;    &quot;les&quot;    &quot;liste&quot;  &quot;sont&quot;   &quot;une&quot;</code></pre>
+<p>Les deux mots les plus fréquents sont <strong>« listes » et « r
+»</strong> (3 occurrences chacun). La 3<sup>e</sup> place est partagée :
+5 mots apparaissent 2 fois (« des », « les », « liste », « sont », « une
+»). <code>head(freq, 3)</code> en afficherait un seul de façon
+arbitraire ; il est plus honnête de signaler l’ex-æquo.</p>
+<p><strong>d.</strong> Le mot le plus long :</p>
+<pre class="r"><code>longueurs &lt;- nchar(tous_mots)
+tous_mots[longueurs == max(longueurs)]</code></pre>
+<pre><code>## [1] &quot;statistique&quot;</code></pre>
+<p>Le mot le plus long est <strong>« statistique »</strong>, avec 11
+lettres.</p>
 </div>
 <div id="d5" class="section level2">
 <h2>D5</h2>

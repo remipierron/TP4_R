@@ -673,6 +673,108 @@ Affecter `NULL` à un élément le supprime : la liste contient maintenant `r le
 
 ## D3
 
+```{r D3-structure}
+str(promo, max.level = 1)
+```
+
+**a.** Nombre d'étudiants et nom du 3^e^ :
+
+```{r D3-a}
+length(promo)
+promo[[3]]$nom
+```
+
+La liste contient **`r length(promo)` étudiants** ; le 3^e^ s'appelle **`r promo[[3]]$nom`**.
+
+**b.** Vecteurs des noms et des filières : `sapply()` applique la fonction d'extraction `"[["` à chaque étudiant, avec l'argument `"nom"` (ou `"filiere"`), et simplifie le résultat en vecteur.
+
+```{r D3-b}
+noms <- sapply(promo, "[[", "nom")
+filieres <- sapply(promo, "[[", "filiere")
+noms
+filieres
+```
+
+**c.** Liste des vecteurs de notes et nombre de notes par étudiant. On utilise `lapply()`, qui renvoie toujours une liste, puisque les vecteurs n'ont pas la même longueur :
+
+```{r D3-c}
+notes <- lapply(promo, "[[", "notes")
+names(notes) <- noms
+notes
+lengths(notes)
+```
+
+Awa a `r lengths(notes)["Awa"]` notes, Bruno `r lengths(notes)["Bruno"]`, Chen `r lengths(notes)["Chen"]`, Dina `r lengths(notes)["Dina"]` et Elias `r lengths(notes)["Elias"]`.
+
+**d.** Moyenne de chaque étudiant et data frame `bilan`, trié par moyenne décroissante :
+
+```{r D3-d}
+moyennes <- sapply(notes, mean)
+moyennes
+
+bilan <- data.frame(nom      = noms,
+                    filiere  = filieres,
+                    nb_notes = lengths(notes),
+                    moyenne  = round(moyennes, 2))
+bilan <- bilan[order(bilan$moyenne, decreasing = TRUE), ]
+rownames(bilan) <- NULL
+bilan
+```
+
+**`r bilan$nom[1]`** a la meilleure moyenne (`r bilan$moyenne[1]`), **`r bilan$nom[nrow(bilan)]`** la plus faible (`r bilan$moyenne[nrow(bilan)]`).
+
+**e.** Pourquoi pas une matrice de notes ?
+
+```{r D3-e}
+str(sapply(promo, "[[", "notes"))
+```
+
+Une matrice est rectangulaire : chaque ligne doit avoir **le même nombre de colonnes**. Or les étudiants ont entre `r min(lengths(notes))` et `r max(lengths(notes))` notes. Pour faire entrer ces données dans une matrice, il faudrait compléter les lignes courtes avec des `NA`, ou bien `matrix()` recyclerait les valeurs et inventerait des notes. D'ailleurs, `sapply()` n'arrive pas à simplifier les notes en matrice et renvoie une liste. De plus, une matrice n'a qu'un seul type : on ne pourrait pas y ranger à la fois le nom, la filière (texte) et les notes (nombres). La liste, qui accepte des éléments de longueurs et de types différents, est la structure adaptée.
+
 ## D4
+
+**a.** Découpage en mots avec `strsplit()`, qui renvoie une liste (un vecteur de mots par phrase) :
+
+```{r D4-a}
+mots <- strsplit(phrases, " ")
+mots
+lengths(mots)
+```
+
+Les phrases comptent respectivement **`r paste(lengths(mots), collapse = ", ")` mots**.
+
+**b.** Tous les mots dans un seul vecteur, en minuscules :
+
+```{r D4-b}
+tous_mots <- tolower(unlist(mots))
+tous_mots
+length(tous_mots)
+length(unique(tous_mots))
+```
+
+Il y a **`r length(tous_mots)` mots au total**, dont **`r length(unique(tous_mots))` distincts**. Le passage en minuscules est important : sans lui, « R » et « r » ou « Les » et « les » seraient comptés comme des mots différents.
+
+**c.** Les mots les plus fréquents :
+
+```{r D4-c}
+freq <- sort(table(tous_mots), decreasing = TRUE)
+head(freq, 6)
+```
+
+```{r D4-c-ex-aequo}
+seuil <- freq[3]                         # fréquence du 3e mot
+names(freq)[freq >= seuil]
+```
+
+Les deux mots les plus fréquents sont **« `r names(freq)[1]` » et « `r names(freq)[2]` »** (`r freq[1]` occurrences chacun). La 3^e^ place est partagée : `r sum(freq == freq[3])` mots apparaissent `r freq[3]` fois (`r paste0("« ", names(freq)[freq == freq[3]], " »", collapse = ", ")`). `head(freq, 3)` en afficherait un seul de façon arbitraire ; il est plus honnête de signaler l'ex-æquo.
+
+**d.** Le mot le plus long :
+
+```{r D4-d}
+longueurs <- nchar(tous_mots)
+tous_mots[longueurs == max(longueurs)]
+```
+
+Le mot le plus long est **« `r unique(tous_mots[longueurs == max(longueurs)])` »**, avec `r max(longueurs)` lettres.
 
 ## D5
